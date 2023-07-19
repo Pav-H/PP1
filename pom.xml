@@ -30,6 +30,7 @@
              <scope>test</scope>
          </dependency>
 
+        <!-- PostgreSQL Connector -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>

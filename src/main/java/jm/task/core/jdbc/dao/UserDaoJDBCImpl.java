@@ -15,12 +15,13 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Connection connection = new Util().connectDB();
              Statement statement = connection.createStatement()) {
 
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS users (" +
-                                                        "id SERIAL PRIMARY KEY," +
-                                                        "name VARCHAR(50)," +
-                                                        "lastName VARCHAR(50)," +
-                                                        "age SMALLINT" + ")";
-            statement.executeUpdate(createTableSQL);
+            String query = "CREATE TABLE IF NOT EXISTS users (" +
+                    "id SERIAL PRIMARY KEY," +
+                    "name VARCHAR(50)," +
+                    "lastName VARCHAR(50)," +
+                    "age SMALLINT" + ")";
+
+            statement.executeUpdate(query);
             System.out.println("Table 'users' created successfully!");
         } catch (SQLException e) {
             System.out.println("Failed to connect to the Postgres database!");
@@ -32,8 +33,8 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Connection connection = new Util().connectDB();
              Statement statement = connection.createStatement()) {
 
-            String dropTableSQL = "DROP TABLE IF EXISTS users";
-            statement.executeUpdate(dropTableSQL);
+            String query = "DROP TABLE IF EXISTS users";
+            statement.executeUpdate(query);
             System.out.println("Table 'users' dropped successfully.");
         } catch (SQLException e) {
             System.out.println("Failed to connect to the Postgres database!");
@@ -43,7 +44,6 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void saveUser(String name, String lastName, byte age) throws SQLException {
         String query = "INSERT INTO users (name, lastName, age) VALUES (?, ?, ?)";
-
         try (Connection connection = new Util().connectDB();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
@@ -77,9 +77,11 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public List<User> getAllUsers() throws SQLException {
+        String query = "SELECT * FROM users";
+
         try (Connection connection = new Util().connectDB();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM users")) {
+             ResultSet resultSet = statement.executeQuery(query)) {
 
             List<User> users = new ArrayList<>();
             if (tableExists(connection, "users")) {
@@ -100,12 +102,13 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void cleanUsersTable() throws SQLException {
+        String query = "DELETE FROM users";
+
         try (Connection connection = new Util().connectDB();
              Statement statement = connection.createStatement()) {
 
             if (tableExists(connection, "users")) {
-                String cleanTableSQL = "DELETE FROM users";
-                int rowsAffected = statement.executeUpdate(cleanTableSQL);
+                int rowsAffected = statement.executeUpdate(query);
                 System.out.println(rowsAffected + " row(s) deleted.");
             }
         } catch (SQLException e) {
